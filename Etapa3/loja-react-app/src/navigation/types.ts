@@ -4,6 +4,7 @@ export type TabParamList = {
   Catalog: undefined,
   Settings: undefined,
   Register: undefined,
+  Cart: undefined,
 };
 
 export type RootStackParamList = {
