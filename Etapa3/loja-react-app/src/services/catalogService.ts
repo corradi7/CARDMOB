@@ -9,7 +9,7 @@ export async function getCatalog(): Promise<any[]> { // alterado
         const data = await response.json();
         // console.log(data);
         // return Promise.resolve(data.catalog);
-        return data.catalog; // incluido / alterado
+        return data.catalog; // alterado
     }
     catch (error) {
         console.error(error);
