@@ -1,8 +1,7 @@
 import Constants from 'expo-constants'; // novo
 
 // const API_URL = Config.API_URL;
-// const API_URL = 'http://10.81.205.3:5000';
-
+// const API_URL = 'http://10.81.205.50:5000';
 const { apiUrl } = Constants.expoConfig?.extra || {}; // novo
 
 export async function fakeLogin(email: string, password: string): Promise<string> {

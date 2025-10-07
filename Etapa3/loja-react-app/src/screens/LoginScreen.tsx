@@ -4,7 +4,6 @@ import { View, TextInput, Button, StyleSheet, Text, SafeAreaView} from "react-na
 import { requestLogin } from "../services/authService";
 import { useAuth } from "../contexts/AuthContext";
 
-
 export default function LoginScreen({ navigation }: any) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');

@@ -1,64 +1,122 @@
-import React, { useState, useEffect } from "react"; // alterado
-import { View, Text, FlatList, StyleSheet} from 'react-native';
+import React from 'react';
+import { View, Text, FlatList, StyleSheet, Button, TouchableOpacity } from 'react-native';
 
-import CatalogCard from "../catalog/CatalogCard";
+import CartItem from './CartItem';
 
-// Todo: importar o serviço de recuperação do catalog
-import { getCatalog } from '../../services/catalogService'; // novo
+import { useShop } from '../../contexts/ShopContext';
 
-import { useShop } from "../../contexts/ShopContext";
+const CartScreen = ({ navigation }: any) => {
+    const { cartItems } = useShop();
 
-const CatalogScreen = ({navigation} : any) => {
-    const [catalog, setCatalog] = useState<any[]>([]); // novo
-    const { addToCart } = useShop();
-
-    // bloco novo
-    useEffect(() => {
-        const fetchCatalog = async () => {
-            try {
-                const data = await getCatalog();
-                setCatalog(data);
-            }
-            catch (error) {
-                console.error('Erro ao buscar o catálogo:', error);
-            }
-        };
-        fetchCatalog();
-        console.log(catalog);
-    }, []);
-
-    const handleBuyPress = (product : any) => {
-        // 1 - Adicionar ao carrinho
-        // 2 - Ir para a tela do carrinho
-        addToCart(product);
-        console.log(product);
-    };
-
-    const renderItem = ({ item }: any) => ( // alterado
-        <CatalogCard 
-            product={item} // alterado
-            onBuyPress={() => handleBuyPress(item)} // alterado
-        />
+    const renderItem = ({item} : any) => (
+        <CartItem item={item} />
     );
+
+    const handleCheckout = () => {
+        console.log('Concluindo a compra');
+    }
 
     return (
         <View style={styles.container}>
-            <Text>Menu</Text>
-            <FlatList 
-                data={catalog} // alterado
-                renderItem={renderItem}
-                keyExtractor={(item: any) => item.id.toString()} // alterado
-            />
+            {cartItems.length === 0 ? (
+                <View style={styles.container}>
+                    <Text style={styles.empty}>Seu carrinho está vazio.</Text>
+                    <Button 
+                        title='Ver produtos'
+                        onPress={ () => navigation.navigate('Catalog') }
+                    />
+                </View>
+            ) : (
+                <View style={styles.listContainer}>
+                    {/* <Text>Carrinho de compras</Text> */}
+                    <FlatList 
+                        data={cartItems}
+                        renderItem={renderItem}
+                        keyExtractor={(item: any) => item.id.toString()}
+                    />
+                    <View style={styles.totalContainer}>
+                        <Text style={styles.totalText}>Total R$ {handleCheckout}</Text>
+                        <TouchableOpacity
+                            onPress={handleCheckout}
+                            style={styles.clearButton}
+                        >
+                            <Text style={styles.clearButtonText}>Limpar carrinho</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('Catalog')}
+                            style={styles.continueButton}
+                        >
+                            <Text style={styles.continueButtonText}>Continuar comprando</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('Catalog')}
+                            style={styles.checkoutButton}
+                        >
+                            <Text style={styles.checkoutButtonText}>Concluir Pedido</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            )
+            }
         </View>
     );
 };
-
-export default CatalogScreen;
+export default CartScreen;
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 15,
-        backgroundColor: '#F8F8F8',
-    }
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    empty: {
+        fontSize: 16,
+        marginBottom: 20,
+    },
+    listContainer: {
+        flex: 1,
+    },
+    totalContainer: {
+        padding: 10,
+        borderWidth: 1,
+        backgroundColor: '#F9F9F9',
+        borderTopColor: '#CCC',
+    },
+    totalText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    clearButton: {
+        marginTop: 10,
+        backgroundColor: 'grey',
+        padding: 10,
+        borderRadius: 5,
+    },
+    clearButtonText: {
+        color: '#FFF',
+        textAlign: 'center',
+    },
+    continueButton: {
+        marginTop: 10,
+        backgroundColor: '#007BFF',
+        padding: 10,
+        borderRadius: 5,
+    },
+    continueButtonText: {
+        color: '#FFF',
+        textAlign: 'center',
+        fontSize: 16,
+    },
+    checkoutButton: {
+        marginTop: 10,
+        backgroundColor: '#28A745',
+        padding: 10,
+        borderRadius: 5,
+    },
+    checkoutButtonText: {
+        color: '#FFF',
+        textAlign: 'center',
+        fontSize: 16,
+    },
 });
